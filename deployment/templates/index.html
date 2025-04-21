@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Medical AI Agent</title>
+  <style>
+    body {
+      max-width: 800px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    .box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 50px;
+      white-space: pre-wrap;
+      background: #fafafa;
+    }
+    button {
+      padding: 8px 16px;
+    }
+
+    .response-container {
+      display: flex;
+      gap: 20px;       
+      margin-bottom: 20px;
+    }
+    .response-container .agent {
+      flex: 1;         
+    }
+  </style>
+</head>
+<body>
+  <h2>Please describe your symptoms and past medical records</h2>
+  <textarea id="inputText" placeholder="For example: Starting cough from two days ago and ..."></textarea>
+  <br/>
+  <button id="submitBtn">Submit</button>
+
+  <div class="response-container">
+    <div class="agent">
+      <h3>Docter DeepSeek </h3>
+      <div id="agent1" class="box"></div>
+    </div>
+    <div class="agent">
+      <h3>Docter Llama</h3>
+      <div id="agent2" class="box"></div>
+    </div>
+  </div>
+
+ 
+  <h3>Output Verification</h3>
+  <div id="verification" class="box"></div>
+
+  <h3>Diagnosis and Advice</h3>
+  <div id="diagnosis" class="box"></div>
+
+  <script>
+    document.getElementById('submitBtn').onclick = async () => {
+      const input = document.getElementById('inputText').value.trim();
+      if (!input) return alert('Please input your symptoms first');
+      document.getElementById('submitBtn').disabled = true;
+      try {
+        const res = await fetch('/api/medical', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ input })
+        });
+        const data = await res.json();
+        document.getElementById('agent1').textContent = data.agent1;
+        document.getElementById('agent2').textContent = data.agent2;
+        document.getElementById('verification').textContent = data.verified;
+        document.getElementById('diagnosis').textContent = data.final;
+      } catch (e) {
+        console.error(e);
+        alert('Failed to fetch data from server. Start again!');
+      } finally {
+        document.getElementById('submitBtn').disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
