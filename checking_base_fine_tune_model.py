@@ -16,13 +16,20 @@ client = OpenAI(
 
 # Paths & model IDs\BASE_MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
 
-NUM_EXAMPLES = 50
+NUM_EXAMPLES = 5
 RESULT_CSV = "comparison_results.csv"
 BASE_MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
 
-# --- Load Base Model ---
-print("Loading base model and tokenizer...")
-tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID, use_fast=True, trust_remote_code=True)
+# --- Load Tokenizer ---
+print("Loading tokenizer...")
+tokenizer = AutoTokenizer.from_pretrained(
+    BASE_MODEL_ID,
+    use_fast=True,
+    trust_remote_code=True
+)
+
+# --- Load Pure Base Model ---
+print("Loading pure base model...")
 base_model = AutoModelForCausalLM.from_pretrained(
     BASE_MODEL_ID,
     device_map="auto",
@@ -30,22 +37,27 @@ base_model = AutoModelForCausalLM.from_pretrained(
     trust_remote_code=True
 )
 base_model.eval()
-
 device = next(base_model.parameters()).device
 
-# --- Load Fine-Tuned LoRA Model ---
-print("Applying LoRA adapters...")
-# Ensure the adapter files are in LORA_DIR
-time.sleep(0.5)
-assert os.path.isdir(LORA_DIR), f"Directory {LORA_DIR} not found"
+# --- Load Fine-Tuned Model (Separate Instance) ---
+print("Loading fine-tuned model with LoRA adapters...")
+# Load a fresh copy of the base model
+finetuned_model = AutoModelForCausalLM.from_pretrained(
+    BASE_MODEL_ID,
+    device_map="auto",
+    torch_dtype=torch.float16,
+    trust_remote_code=True
+)
+# Apply LoRA adapters
 config = PeftConfig.from_pretrained(LORA_DIR)
 finetuned_model = PeftModel.from_pretrained(
-    base_model,
+    finetuned_model,
     LORA_DIR,
     device_map="auto",
     torch_dtype=torch.float16
 )
 finetuned_model.eval()
+
 
 # --- Helper Functions ---
 def generate_medical_question():
@@ -53,7 +65,7 @@ def generate_medical_question():
     resp = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a medical educator. Generate a concise, challenging medical question."},
+            {"role": "system", "content": "You are a medical educator. Generate a concise, challenging medical question. One example is What is the description of the medical code 89.43 in ICD9PROC?"},
             {"role": "user", "content": "Please provide one medical question."}
         ],
         temperature=0.7,
