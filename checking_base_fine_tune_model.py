@@ -23,7 +23,7 @@ def setup_openai_client(api_key_env=OPENAI_KEY_ENV, base_url=BASE_URL):
         raise ValueError(f"Environment variable {api_key_env} not set.")
     return OpenAI(base_url=base_url, api_key=api_key)
 
-# --- Evaluation Functions ---
+
 def evaluate_consistency(client, prompt, response_a, response_b, evaluator_model="gpt-4o-mini"):
     system_msg = """
 You are a medical expert evaluator. Do not output any extra fields.
@@ -91,7 +91,7 @@ def generate_medical_questions(client, num_questions=DEFAULT_NUM_EXAMPLES):
     func_args = json.loads(response.choices[0].message.function_call.arguments)
     return func_args.get("questions", [])
 
-# --- Local Model Loading & Inference ---
+
 def load_tokenizer_and_model(model_id, device_map="auto", torch_dtype=torch.float16, lora_dir=None):
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map=device_map, torch_dtype=torch_dtype, trust_remote_code=True)
@@ -109,7 +109,7 @@ def get_model_answer(tokenizer, model, device, question, max_new_tokens=200):
     text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return text[len(prompt):].strip()
 
-# --- Voting ---
+
 def vote_on_answers(client, question, ans_a, ans_b, evaluator_model="gpt-4o-mini"):
     vote_prompt = (
         f"Question: {question}\nAnswer A: {ans_a}\nAnswer B: {ans_b}\n"

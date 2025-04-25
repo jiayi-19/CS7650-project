@@ -54,7 +54,6 @@ Please reply with **only** a JSON object matching this schema:
   "better_model_reason": "<brief explanation why that response is better>"
 }}
 """
-    # 1. Call the API
     completion = client.chat.completions.create(
         model=evaluator_model,
         messages=[
@@ -65,11 +64,9 @@ Please reply with **only** a JSON object matching this schema:
     )
     text = completion.choices[0].message.content.strip()
 
-    # 2. Parse JSON
     try:
         result = json.loads(text)
     except json.JSONDecodeError:
-        # Fallback if the model didn't produce valid JSON
         result = {
             "consistent": None,
             "consistent_reason": text,

@@ -36,7 +36,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel, PeftConfig
 from tqdm import tqdm
 
-# --- Constants ---
+
 BASE_URL = "https://api.openai.com/v1"
 OPENAI_KEY_ENV = "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"
 DEFAULT_NUM_EXAMPLES = 30  # Only 30 patient-style questions
@@ -60,7 +60,6 @@ MODEL_CONFIGS = [
     }
 ]
 
-# --- Client Setup ---
 def setup_openai_client(api_key_env=OPENAI_KEY_ENV, base_url=BASE_URL):
     return OpenAI(base_url=base_url, api_key=api_key_env)
 
@@ -144,7 +143,6 @@ def get_model_answer(tokenizer, model, device, question):
 
 def main():
     client = setup_openai_client()
-
     patient_prompt = (
         f"Generate exactly 35 patient-style questions phrased as if you are a patient, "
         "asking about your symptoms, possible causes, and treatment options. Describe symptoms in two sentences. "
