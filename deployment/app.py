@@ -9,7 +9,7 @@ LLM1_URL = "http://localhost:8000/v1/chat/completions"
 LLM2_URL = "http://localhost:8080/v1/chat/completions"
 client = OpenAI(
     base_url="https://api.openai.com/v1",
-    api_key= "sk-lQa8WYxoPgfFxoPs-Oqf6_VDr4jcVcQbKYbZDl8N-JT3BlbkFJL8-B3Ivu0QkSjWSrlLTU5_undnDZsEtrMGVVUEtO8A"
+    api_key= "" #make this blank due to github security policy
 )
 @app.route('/')
 def index():
