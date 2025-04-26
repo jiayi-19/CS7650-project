@@ -1,4 +1,6 @@
-# CS7650-project
+# CS7650-project: MobileMedAgents
+
+Fine-tuning compact language models for local medical reasoning agents.
 
 
 ## 📦 Download Fine-tuned Model
