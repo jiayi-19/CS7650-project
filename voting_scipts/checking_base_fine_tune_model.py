@@ -62,7 +62,6 @@ Please reply with **only** a JSON object matching this schema:
     except json.JSONDecodeError:
         return {"consistent": None, "consistent_reason": text}
 
-# --- Question Generation ---
 FUNCTIONS = [{
   "name": "generate_questions",
   "description": "Generate medical questions.",
@@ -128,7 +127,6 @@ def count_votes(df, vote_col='vote'):
     counts = df[vote_col].str.strip().str[0].str.upper().value_counts()
     return {k: int(counts.get(k, 0)) for k in ['A','B','T']}
 
-# --- Main Workflow ---
 def main():
     client = setup_openai_client()
 
@@ -162,7 +160,6 @@ def main():
         results.append(entry)
         time.sleep(1)
 
-    # Save results
     df = pd.DataFrame(results)
     df.to_csv(RESULT_CSV, index=False)
     print(f"Saved comparison results to {RESULT_CSV}")

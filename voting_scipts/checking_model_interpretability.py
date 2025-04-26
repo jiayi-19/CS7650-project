@@ -39,9 +39,8 @@ from tqdm import tqdm
 
 BASE_URL = "https://api.openai.com/v1"
 OPENAI_KEY_ENV = "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"
-DEFAULT_NUM_EXAMPLES = 30  # Only 30 patient-style questions
+DEFAULT_NUM_EXAMPLES = 30  
 
-# Define multiple model configurations
 MODEL_CONFIGS = [
     {
         "name": "deepSeek-R1",
@@ -63,7 +62,6 @@ MODEL_CONFIGS = [
 def setup_openai_client(api_key_env=OPENAI_KEY_ENV, base_url=BASE_URL):
     return OpenAI(base_url=base_url, api_key=api_key_env)
 
-# --- Question Generation ---
 FUNCTIONS = [{
     "name": "generate_questions",
     "description": "Generate patient-style medical questions.",
@@ -95,7 +93,6 @@ def generate_questions(client, prompt_text):
     args = json.loads(response.choices[0].message.function_call.arguments)
     return [q["question"] for q in args.get("questions", [])]
 
-# --- Evaluation Function ---
 def evaluate_interpretability_vote(client, prompt, response_a, response_b):
     system_msg = "You are a layperson evaluator assessing clarity from a patient's perspective."
     user_msg = f"""
@@ -121,8 +118,6 @@ Reply with only a JSON object:
         temperature=0.0
     )
     return json.loads(comp.choices[0].message.content)
-
-# --- Model Loading & Inference ---
 def load_tokenizer_and_model(model_id, device_map="auto", torch_dtype=torch.float16, lora_dir=None):
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map=device_map, torch_dtype=torch_dtype, trust_remote_code=True)
@@ -192,7 +187,6 @@ def main():
         }]
         pd.DataFrame(summary).to_csv(f'summary_{name}.csv', index=False)
 
-        # Clear GPU memory
         del model_base, model_ft, tokenizer_base, tokenizer_ft
         torch.cuda.empty_cache()
 
