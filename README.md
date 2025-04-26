@@ -15,7 +15,7 @@ You can download the fine-tuned adapter for [llama_3.2_3B_Instruct] here:
 
 You can download the fine-tuned adapter for [SmolLM2-1.7B-Instruct] here:
 
-👉 [Download Link (Google Drive)](https://drive.google.com/file/d/1evxjquaUD9QOJC5e7wfZfe5tjL7T8ZKf/view?usp=sharing)
+👉 [Download Link (Google Drive)](https://drive.google.com/file/d/1QGvFzMRAly0Vj_pF-8pft9e5aSEEa1WV/view?usp=sharing)
 
 
 
